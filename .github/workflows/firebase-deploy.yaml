@@ -30,7 +30,7 @@ jobs:
       # Set up Firebase service account key
       - name: Set GOOGLE_APPLICATION_CREDENTIALS
         run: |
-          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" | base64 --decode > $GITHUB_WORKSPACE/firebase-service-account.json
+          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_SAMPLE_APP_7018C }}" | base64 --decode > $GITHUB_WORKSPACE/firebase-service-account.json
 
       # Deploy to Firebase Hosting and Functions
       - name: Deploy to Firebase Hosting and Functions
