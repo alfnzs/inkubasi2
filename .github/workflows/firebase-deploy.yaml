@@ -16,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '20'
+          node-version: '18'
 
       - name: Install Dependencies
         run: npm install
@@ -27,8 +27,10 @@ jobs:
       - name: Build the app
         run: npm run build
 
-      - name: Authenticate with Firebase
-        run: echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" > firebase-service-account.json
+      - name: Set GOOGLE_APPLICATION_CREDENTIALS
+        run: echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" > $GITHUB_WORKSPACE/firebase-service-account.json
 
       - name: Deploy to Firebase Hosting and Functions
-        run: firebase deploy --only hosting,function --project dev --force --token $(cat firebase-service-account.json)
+        run: |
+          export GOOGLE_APPLICATION_CREDENTIALS="$GITHUB_WORKSPACE/firebase-service-account.json"
+          firebase deploy --only hosting,function --project dev --force
