@@ -27,9 +27,12 @@ jobs:
       - name: Build the app
         run: npm run build
 
+      # Set up Firebase service account key
       - name: Set GOOGLE_APPLICATION_CREDENTIALS
-        run: echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" > $GITHUB_WORKSPACE/firebase-service-account.json
+        run: |
+          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" | base64 --decode > $GITHUB_WORKSPACE/firebase-service-account.json
 
+      # Deploy to Firebase Hosting and Functions
       - name: Deploy to Firebase Hosting and Functions
         run: |
           export GOOGLE_APPLICATION_CREDENTIALS="$GITHUB_WORKSPACE/firebase-service-account.json"
