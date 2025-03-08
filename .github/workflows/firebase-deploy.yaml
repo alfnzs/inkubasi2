@@ -16,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '18'
+          node-version: '20'
 
       - name: Install Dependencies
         run: npm install
@@ -27,10 +27,10 @@ jobs:
       - name: Build the app
         run: npm run build
 
-      # Set up Firebase service account key
+      # Directly set Firebase service account key (no base64 decoding)
       - name: Set GOOGLE_APPLICATION_CREDENTIALS
         run: |
-          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_SAMPLE_APP_7018C }}" | base64 --decode > $GITHUB_WORKSPACE/firebase-service-account.json
+          echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_SAMPLE_APP_7018C }}" > $GITHUB_WORKSPACE/firebase-service-account.json
 
       # Deploy to Firebase Hosting and Functions
       - name: Deploy to Firebase Hosting and Functions
