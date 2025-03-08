@@ -27,17 +27,17 @@ jobs:
       - name: Build the app
         run: npm run build
 
-      # Menyimpan file service account dari secret ke dalam file
+      # Set Firebase service account credentials
       - name: Set Firebase Service Account Credentials
         run: |
           echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" > $GITHUB_WORKSPACE/firebase-service-account.json
 
-      # Autentikasi menggunakan Firebase CI Token
+      # Authenticate using Firebase CI Token
       - name: Authenticate with Firebase using CI Token
         run: |
-          firebase use --add --project dev --token ${{ secrets.FIREBASE_AUTH_TOKEN }}
+          firebase login:ci --token ${{ secrets.FIREBASE_AUTH_TOKEN }}
 
-      # Deploy ke Firebase Hosting dan Functions
+      # Deploy to Firebase Hosting and Functions
       - name: Deploy to Firebase Hosting and Functions
         run: |
           export GOOGLE_APPLICATION_CREDENTIALS="$GITHUB_WORKSPACE/firebase-service-account.json"
