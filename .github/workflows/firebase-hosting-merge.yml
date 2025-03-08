@@ -1,50 +1,38 @@
-name: Firebase Deploy
+name: Deploy Firebase
 
 on:
   push:
     branches:
-      - main  # Workflow hanya berjalan saat ada push ke branch 'main'
+      - main
 
 jobs:
-  build:
-    runs-on: ubuntu-latest  # Menentukan environment yang digunakan, dalam hal ini Ubuntu terbaru
-    
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3  # Checkout kode dari repository
+      - name: Checkout Repo
+        uses: actions/checkout@v2
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v2
         with:
-          node-version: '18'  # Menggunakan Node.js versi 18
+          node-version: '20'
 
-      - name: Install dependencies
-        run: |
-          npm install
-
-      - name: Build the project
-        run: |
-          npm run build
+      - name: Install Dependencies
+        run: npm install
 
       - name: Install Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: Build
         run: |
-          npm install -g firebase-tools
+          echo "FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }}" >> $GITHUB_ENV
+          echo "FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_AUTH_DOMAIN }}" >> $GITHUB_ENV
+          echo "FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }}" >> $GITHUB_ENV
+          echo "FIREBASE_STORAGE_BUCKET=${{ secrets.FIREBASE_STORAGE_BUCKET }}" >> $GITHUB_ENV
+          echo "FIREBASE_MESSAGING_SENDER_ID=${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}" >> $GITHUB_ENV
+          echo "FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }}" >> $GITHUB_ENV
+          npm run build
 
       - name: Deploy to Firebase Hosting
-        run: |
-          firebase deploy --only hosting --token ${{ secrets.FIREBASE_AUTH_TOKEN }}  # Pastikan ada firebase.json di root direktori
-
-      - name: Run Firebase App
-        run: |
-          echo "Initializing Firebase App with secrets"
-          node -e "const { initializeApp } = require('firebase/app'); const { getFirestore } = require('firebase/firestore'); const firebaseConfig = {
-            apiKey: process.env.FIREBASE_API_KEY || '${{ secrets.FIREBASE_API_KEY }}',
-            authDomain: process.env.FIREBASE_AUTH_DOMAIN || '${{ secrets.FIREBASE_AUTH_DOMAIN }}',
-            projectId: process.env.FIREBASE_PROJECT_ID || '${{ secrets.FIREBASE_PROJECT_ID }}',
-            storageBucket: process.env.FIREBASE_STORAGE_BUCKET || '${{ secrets.FIREBASE_STORAGE_BUCKET }}',
-            messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID || '${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}',
-            appId: process.env.FIREBASE_APP_ID || '${{ secrets.FIREBASE_APP_ID }}'
-          }; 
-          const app = initializeApp(firebaseConfig); 
-          const db = getFirestore(app); 
-          console.log(db);"
+        run: firebase deploy --only hosting,function --token ${{ secrets.FIREBASE_TOKEN }} --project dev --force
