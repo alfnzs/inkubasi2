@@ -32,7 +32,12 @@ jobs:
         run: |
           echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" > $GITHUB_WORKSPACE/firebase-service-account.json
 
-      # Autentikasi dengan menggunakan service account dan deploy ke Firebase Hosting & Functions
+      # Autentikasi menggunakan Firebase CI Token
+      - name: Authenticate with Firebase using CI Token
+        run: |
+          firebase use --add --project dev --token ${{ secrets.FIREBASE_AUTH_TOKEN }}
+
+      # Deploy ke Firebase Hosting dan Functions
       - name: Deploy to Firebase Hosting and Functions
         run: |
           export GOOGLE_APPLICATION_CREDENTIALS="$GITHUB_WORKSPACE/firebase-service-account.json"
