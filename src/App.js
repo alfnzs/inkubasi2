@@ -1,5 +1,5 @@
 import './App.css';
-import { Component } from 'react';
+import React, { Component } from 'react';
 import {deleteDoc, doc, addDoc, collection, getDocs, getFirestore } from 'firebase/firestore';
 import { app } from './firebase';
 
